@@ -103,14 +103,14 @@ class GcodeMacroPlugin(
                 "current": self._plugin_version,
                 "stable_branch": {
                     "name": "Stable",
-                    "branch": "main",
-                    "comittish": ["main"],
+                    "branch": "master",
+                    "comittish": ["master"],
                 },
                 "prerelease_branches": [
                     {
                         "name": "Release Candidate",
                         "branch": "pre-release",
-                        "comittish": ["pre-release", "main"],
+                        "comittish": ["pre-release", "master"],
                     }
                 ],
                 # update method: pip
