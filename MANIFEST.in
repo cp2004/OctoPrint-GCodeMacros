@@ -1,0 +1,6 @@
+include README.md
+recursive-include octoprint_gcode_macro/templates *
+recursive-include octoprint_gcode_macro/translations *
+recursive-include octoprint_gcode_macro/static *
+include versioneer.py
+include octoprint_gcode_macro/_version.py

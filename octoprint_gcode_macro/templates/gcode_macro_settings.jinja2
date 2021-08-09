@@ -1,0 +1,60 @@
+<h4>Gcode Macros</h4>
+
+<div class="form-inline" id="newMacroEditor">
+    <label for="newGcodeMacro" class="inline">{{ _("Create a new macro") }}</label>
+    <div class="input-prepend">
+        <span class="add-on">@</span>
+        <input id="newGcodeMacro" type="text" data-bind="value: newMacroName">
+    </div>
+    <button class="btn btn-primary" data-bind="click: createMacro"><i class="fas fa-plus"></i> {{ _("Create Macro") }}</button>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <td style="width: 20%">{{ _("Macro") }}</td>
+        <td style="width: 50%">{{ _("Description") }}</td>
+        <td style="width: 30%">{{ _("Actions") }}</td>
+    </tr>
+    </thead>
+    <tbody data-bind="foreach: settings.settings.plugins.gcode_macro.macros">
+    <tr>
+        <td><code data-bind="text: '@' + command()"></code></td>
+        <td class="macro-description" data-bind="text: description"></td>
+        <td>
+            <button class="btn btn-small" data-bind="click: $root.editMacro">
+                <i class="far fa-edit"></i> {{ _("Edit") }}
+            </button>
+            <button class="btn btn-danger btn-small" data-bind="click: $root.deleteMacro">
+                <i class="far fa-trash-alt"></i> {{ _("Delete") }}
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div id="gcodeMacroEditor" class="modal hide fade-in" data-bind="with: selectedMacro">
+    <div class="modal-header">
+        <button class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>{{ _("Editing Macro")}}</h3>
+    </div>
+    <div class="modal-body">
+
+        <div class="form-inline" id="newMacroEditor">
+            <label for="gcodeMacroCommand" class="inline">{{ _("Command") }}</label>
+            <div class="input-prepend">
+                <span class="add-on">@</span>
+                <input id="gcodeMacroCommand" type="text" data-bind="value: command">
+            </div>
+        </div>
+
+        <label for="macroDescription">{{ _("Description (optional)") }}</label>
+        <textarea id="macroDescription" data-bind="value: description"></textarea>
+
+        <label for="macroContent">Macro Content</label>
+        <textarea id="macroContent" data-bind="value: content"></textarea>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{ _('Close') }}</button>
+    </div>
+</div>

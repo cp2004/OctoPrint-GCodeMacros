@@ -1,0 +1,21 @@
+# Configuration file for the versioneer lookup, manually mapping tags based on branches
+#
+# Format is
+#
+#   <branch-regex> <tag> <reference commit>
+#
+# The file is processed from top to bottom, the first matching line wins. If <tag> or <reference commit> are left out,
+# the lookup table does not apply to the matched branches
+
+# These branches should only use tags, use for your release branches
+master
+main
+pre-release
+rc/.*
+
+# neither should disconnected checkouts, e.g. 'git checkout <tag>'
+HEAD
+\(detached.*
+
+# Every branch is development, so is resolved to 1.0.0
+.* 1.0.0 341d438606d341f401d0d102a4e81e8f14dd572c pep440-dev
