@@ -131,9 +131,3 @@ def __plugin_load__():
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
         "octoprint.comm.protocol.gcode.queuing": __plugin_implementation__.gcode_queueing,
     }
-
-
-from ._version import get_versions
-
-__version__ = get_versions()["version"]
-del get_versions
