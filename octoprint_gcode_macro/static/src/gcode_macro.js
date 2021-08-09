@@ -7,7 +7,7 @@
 
 const ko = window.ko
 const $ = window.$
-const OCTOPRINT_VIEWMODELS = window.OCTORPINT_VIEWMODELS
+const OCTOPRINT_VIEWMODELS = window.OCTOPRINT_VIEWMODELS
 
 $(function () {
   function gcodeMacroViewModel (parameters) {
@@ -22,10 +22,27 @@ $(function () {
       'resume'
     ]
 
-    self.selectedMacro = ko.observable()
+    self.selectedMacro = ko.observable({
+      command: '',
+      content: '',
+      description: ''
+    })
     self.newMacroName = ko.observable('')
 
+    self.allMacroNames = () => {
+      if (self.settings.settings) {
+        // Settings are not defined on binding, only after settings fetch
+        return self.settings.settings.plugins.gcode_macro.macros().map((macro) => macro.command)
+      } else {
+        return []
+      }
+    }
+
     self.createMacro = () => {
+      if (self.isMacroTaken(self.newMacroName())) {
+        // Name is already taken, refuse to create - button should already be disabled
+        return
+      }
       self.selectedMacro({
         command: ko.observable(self.newMacroName()),
         content: ko.observable(''),
@@ -44,7 +61,15 @@ $(function () {
     self.deleteMacro = (data) => {
       self.settings.settings.plugins.gcode_macro.macros.remove(data)
     }
+
+    self.isMacroTaken = (name) => self.FORBIDDEN_MACROS.includes(name) || self.allMacroNames().includes(name)
+
+    self.newMacroValid = ko.computed(() => {
+      const macros = self.allMacroNames().map((name) => name()).concat(self.FORBIDDEN_MACROS)
+      return !macros.includes(self.newMacroName())
+    })
   }
+
   OCTOPRINT_VIEWMODELS.push({
     construct: gcodeMacroViewModel,
     name: 'GcodeMacroViewModel',

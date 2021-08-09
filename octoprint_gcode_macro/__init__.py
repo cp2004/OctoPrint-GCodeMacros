@@ -84,7 +84,9 @@ class GcodeMacroPlugin(
                 return
 
             if content and isinstance(content, str):
+                # Split long string into list of commands for OctoPrint to digest
                 commands = content.split("\n")
+                # Strip gcode comments & whitespace
                 commands = list(map(lambda x: x.split(";")[0].strip(), commands))
                 return commands
 

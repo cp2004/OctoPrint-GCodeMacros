@@ -4,9 +4,11 @@
     <label for="newGcodeMacro" class="inline">{{ _("Create a new macro") }}</label>
     <div class="input-prepend">
         <span class="add-on">@</span>
-        <input id="newGcodeMacro" type="text" data-bind="value: newMacroName">
+        <input id="newGcodeMacro" type="text" data-bind="textInput: newMacroName, css: { 'macro-invalid': !newMacroValid() }">
     </div>
-    <button class="btn btn-primary" data-bind="click: createMacro"><i class="fas fa-plus"></i> {{ _("Create Macro") }}</button>
+    <button class="btn btn-primary" data-bind="click: createMacro, enable: newMacroValid">
+        <i class="fas fa-plus"></i> {{ _("Create Macro") }}
+    </button>
 </div>
 
 <table class="table">
@@ -39,7 +41,6 @@
         <h3>{{ _("Editing Macro")}}</h3>
     </div>
     <div class="modal-body">
-
         <div class="form-inline" id="newMacroEditor">
             <label for="gcodeMacroCommand" class="inline">{{ _("Command") }}</label>
             <div class="input-prepend">
