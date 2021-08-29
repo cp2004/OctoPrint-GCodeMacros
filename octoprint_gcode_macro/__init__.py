@@ -69,26 +69,47 @@ class GcodeMacroPlugin(
         **kwargs,
     ):
         if command.startswith("@"):
-            command = command.strip("@")
-            if command in FORBIDDEN_MACROS or command not in self.macros.keys():
-                # Forbidden, illegal, not a command, ignore, abort
-                return
+            return self.render_macro(command)
 
-            self._logger.debug(f"Received @ command @{command}")
+    def render_macro(self, command, level=0):
+        """
+        Render a macro from a command
+        :param command: string, macro to lookup
+        :param level: int, number of sub-macros that have been rendered
+        :return: list, list of commands to send to the printer
+        """
+        command = command.strip("@")
 
-            try:
-                content = self.macros[command]
-            except KeyError as e:
-                # In theory this shouldn't happen now with the check above
-                self._logger.exception(e)
-                return
+        if command in FORBIDDEN_MACROS or command not in self.macros.keys():
+            # Forbidden, illegal, not a command, ignore, no command
+            return []
 
-            if content and isinstance(content, str):
-                # Split long string into list of commands for OctoPrint to digest
-                commands = content.split("\n")
-                # Strip gcode comments & whitespace
-                commands = list(map(lambda x: x.split(";")[0].strip(), commands))
-                return commands
+        self._logger.debug(f"Rendering macro for @ command @{command}")
+
+        try:
+            content = self.macros[command]
+        except KeyError as e:
+            # In theory this shouldn't happen with the check above, but if it does I want to know
+            self._logger.exception(e)
+            return []
+
+        if content and isinstance(content, str):
+            # Split long string into list of commands for OctoPrint to digest
+            commands = content.split("\n")
+            # Strip gcode comments & whitespace
+            commands = list(map(lambda x: x.split(";")[0].strip(), commands))
+
+            if level <= 4:
+                # Only render up to 5 levels (0 start)
+                # Seems like a sane limit, don't want crashes from circular macros
+                for cmd in commands:
+                    if cmd.startswith("@"):
+                        # Recursively render for each @ command in macro
+                        commands = commands + self.render_macro(cmd, level=level + 1)
+
+            return commands
+
+        return []
 
     # Software update hook
     def get_update_information(self):
@@ -120,7 +141,7 @@ class GcodeMacroPlugin(
 
 
 __plugin_name__ = "Gcode Macros"
-__plugin_pythoncompat__ = ">=3,<4"
+__plugin_pythoncompat__ = ">=3.6,<4"
 __plugin_version__ = __version__
 
 
