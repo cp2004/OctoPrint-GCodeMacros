@@ -12,7 +12,7 @@
 </div>
 
 <p>
-    <i class="fas fa-exclamation-circle text-primary"></i>
+    <i class="fas fa-exclamation-circle text-info"></i>
     Watch out for duplicate commands! Other plugins often use @ commands for specific functions, as well as
     <a href="https://docs.octoprint.org/en/master/features/atcommands.html">these commands</a> for OctoPrint's core functions.
 </p>
@@ -59,6 +59,13 @@
         <textarea id="macroDescription" data-bind="value: description"></textarea>
 
         <label for="macroContent">Macro Content</label>
+        <p>
+            <i class="fas fa-info-circle text-info"></i>
+            You can use the Jinja2 syntax in macros, like OctoPrint's gcode scripts.<br>
+            <a href="https://jinja.palletsprojects.com/en/2.11.x/templates">
+                <i class="fas fa-external-link-alt"></i> Jinja2 Template Designer Documentation
+            </a>
+        </p>
         <textarea id="macroContent" data-bind="value: content"></textarea>
     </div>
     <div class="modal-footer">
