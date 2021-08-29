@@ -1,4 +1,5 @@
 import octoprint.plugin
+from jinja2 import Template
 
 from octoprint_gcode_macro import _version
 
@@ -86,12 +87,7 @@ class GcodeMacroPlugin(
 
         self._logger.debug(f"Rendering macro for @ command @{command}")
 
-        try:
-            content = self.macros[command]
-        except KeyError as e:
-            # In theory this shouldn't happen with the check above, but if it does I want to know
-            self._logger.exception(e)
-            return []
+        content = self.render_with_jinja(command)
 
         if content and isinstance(content, str):
             # Split long string into list of commands for OctoPrint to digest
@@ -106,10 +102,35 @@ class GcodeMacroPlugin(
                     if cmd.startswith("@"):
                         # Recursively render for each @ command in macro
                         commands = commands + self.render_macro(cmd, level=level + 1)
+            else:
+                self._logger.warning(
+                    f"Recursive limit hit trying to render macro {command}"
+                )
 
             return commands
 
         return []
+
+    def get_macro_content(self, command):
+        try:
+            content = self.macros[command]
+        except KeyError as e:
+            # In theory this shouldn't happen with the check above, but if it does I want to know
+            self._logger.exception(e)
+            content = []
+
+        return content
+
+    def render_with_jinja(self, command):
+        content = self.get_macro_content(command)
+
+        try:
+            template = Template(content)
+            return template.render()
+        except Exception as e:
+            self._logger.error(f"Error while rendering macro for {command}")
+            self._logger.exception(e)
+            return ""
 
     # Software update hook
     def get_update_information(self):
