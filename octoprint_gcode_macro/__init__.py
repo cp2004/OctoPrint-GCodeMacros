@@ -70,7 +70,9 @@ class GcodeMacroPlugin(
         **kwargs,
     ):
         if command.startswith("@"):
-            return self.render_macro(command)
+            commands = self.render_macro(command)
+            if commands:
+                return commands
 
     def render_macro(self, command, level=0):
         """
