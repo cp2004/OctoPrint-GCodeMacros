@@ -70,9 +70,7 @@ class GcodeMacroPlugin(
         **kwargs,
     ):
         if command.startswith("@"):
-            commands = self.render_macro(command)
-            if commands:
-                return commands
+            return self.render_macro(command)
 
     def render_macro(self, command, level=0):
         """
@@ -84,8 +82,8 @@ class GcodeMacroPlugin(
         command = command.strip("@")
 
         if command in FORBIDDEN_MACROS or command not in self.macros.keys():
-            # Forbidden, illegal, not a command, ignore, no command
-            return []
+            # Forbidden, illegal, not a macro command, ignore, command unchanged.
+            return [command]
 
         self._logger.debug(f"Rendering macro for @ command @{command}")
 
@@ -111,7 +109,8 @@ class GcodeMacroPlugin(
 
             return commands
 
-        return []
+        # If in doubt, just return the command unchanged.
+        return [command]
 
     def get_macro_content(self, command):
         try:
