@@ -61,8 +61,8 @@ M117 Random number... {{ range(100) | random }}!
 **See the full [Jinja2 Template Designer Documentation](https://jinja.palletsprojects.com/en/2.11.x/templates/#random)
 for more information about the templates**
 
-## Supporting Development
+## Sponsors
 
-I work on OctoPrint, OctoPrint plugins and help support the community in my spare time. It takes a lot of work, so
-if you are interested you can [support me through GitHub Sponsors](https://github.com/sponsors/cp2004). You can
-contribute monthly or one time for any amount, you choose!
+* Sponsor
+
+## 👷
