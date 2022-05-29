@@ -63,6 +63,7 @@ for more information about the templates**
 
 ## Sponsors
 
+* [SimplyPrint](https://simplyprint.io/)
 * [@iFrostizz](https://github.com/iFrostizz)
 * [@KenLucke](https://github.com/KenLucke)
 
