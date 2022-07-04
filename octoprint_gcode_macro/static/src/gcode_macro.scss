@@ -34,9 +34,10 @@ $animation-duration: 0.3s;
   }
 }
 
-#newMacroEditor, #macroDescriptionEditor {
+#newMacroEditor,
+#macroDescriptionEditor {
   margin-bottom: $spacer;
-  &> * {
+  & > * {
     // Space apart children
     margin-right: $spacer;
   }
@@ -51,7 +52,8 @@ $animation-duration: 0.3s;
   min-height: 200px;
 }
 
-#macroContent, #macroDescription {
+#macroContent,
+#macroDescription {
   width: 95%;
   resize: vertical;
 }
@@ -61,7 +63,7 @@ $animation-duration: 0.3s;
 }
 
 .macro-invalid {
-  border-color: #b94a48!important;
-  color: #b94a48!important;
+  border-color: #b94a48 !important;
+  color: #b94a48 !important;
   box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%), 0 0 6px #d59392 !important;
 }

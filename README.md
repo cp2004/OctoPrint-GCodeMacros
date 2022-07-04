@@ -32,7 +32,7 @@ plugin uses `@WLED ON` or `@WLED OFF` to control some LEDs.
 
 The commands are **case sensitive**, and you can have spaces, numbers and punctuation in them!
 
-*These commands will not work while printing from the printer's SD card*
+_These commands will not work while printing from the printer's SD card_
 
 ### Macro Content
 
@@ -63,13 +63,14 @@ for more information about the templates**
 
 ## Sponsors
 
-* [SimplyPrint](https://simplyprint.io/)
-* [@iFrostizz](https://github.com/iFrostizz)
-* [@KenLucke](https://github.com/KenLucke)
+- [SimplyPrint](https://simplyprint.io/)
+- [@iFrostizz](https://github.com/iFrostizz)
+- [@KenLucke](https://github.com/KenLucke)
 
 As well as 5 others supporting me regularly through [GitHub Sponsors](https://github.com/sponsors/cp2004)!
 
 ## Supporting my efforts
 
 I created this project in my spare time, so if you have found it useful or enjoyed using it then please consider [supporting it's development!](https://github.com/sponsors/cp2004). You can sponsor monthly or one time, for any amount you choose.
+
 ## 👷
