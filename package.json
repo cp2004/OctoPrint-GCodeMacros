@@ -3,22 +3,14 @@
   "version": "1.0.0",
   "description": "Configure custom gcode macros for maximum productivity!",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"npm run dev\" \"npm run css-dev\"",
-    "build": "webpack --mode=production",
-    "dev": "webpack --mode=development --watch",
     "css-dev": "sass --watch octoprint_gcode_macro/static/src/gcode_macro.scss octoprint_gcode_macro/static/dist/gcode_macro.css",
     "css-build": "sass --style=compressed --no-source-map octoprint_gcode_macro/static/src/gcode_macro.scss octoprint_gcode_macro/static/dist/gcode_macro.css",
-    "release": "concurrently \"npm run build\" \"npm run css-build\""
+    "release": "npm run css-build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cp2004/OctoPrint-GCodeMacros.git"
   },
-  "keywords": [
-    "wled",
-    "octoprint"
-  ],
   "author": "Charlie Powell",
   "license": "AGPL-3.0-or-later",
   "bugs": {
@@ -26,32 +18,6 @@
   },
   "homepage": "https://github.com/cp2004/OctoPrint-GCodeMacros#readme",
   "devDependencies": {
-    "@babel/core": "^7.14.8",
-    "@babel/preset-env": "^7.14.9",
-    "babel-loader": "^8.2.2",
-    "eslint": "^7.32.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "sass": "^1.37.0",
-    "webpack": "^5.47.1",
-    "webpack-cli": "^4.7.2"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "dependencies": {
-    "concurrently": "^6.2.0",
-    "nanoid": "^3.1.23"
+    "sass": "^1.53.0"
   }
 }

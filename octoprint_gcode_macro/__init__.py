@@ -53,7 +53,7 @@ class GcodeMacroPlugin(
     # AssetPlugin mixin
     def get_assets(self):
         return {
-            "js": ["dist/gcode_macro.js"],
+            "js": ["gcode_macro.js"],
             "css": ["dist/gcode_macro.css"],
         }
 

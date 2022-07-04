@@ -5,10 +5,6 @@
  * License: AGPLv3
  */
 
-const ko = window.ko
-const $ = window.$
-const OCTOPRINT_VIEWMODELS = window.OCTOPRINT_VIEWMODELS
-
 $(function () {
   function gcodeMacroViewModel (parameters) {
     const self = this
