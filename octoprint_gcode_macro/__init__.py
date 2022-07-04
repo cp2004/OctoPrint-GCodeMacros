@@ -95,19 +95,23 @@ class GcodeMacroPlugin(
             # Strip gcode comments & whitespace
             commands = list(map(lambda x: x.split(";")[0].strip(), commands))
 
+            result = []
+
             if level <= 4:
                 # Only render up to 5 levels (0 start)
                 # Seems like a sane limit, don't want crashes from circular macros
                 for cmd in commands:
                     if cmd.startswith("@"):
                         # Recursively render for each @ command in macro
-                        commands = commands + self.render_macro(cmd, level=level + 1)
+                        result += self.render_macro(cmd, level=level + 1)
+                    else:
+                        result += [cmd]
             else:
                 self._logger.warning(
                     f"Recursive limit hit trying to render macro {command}"
                 )
 
-            return commands
+            return result
 
         # If in doubt, just return the command unchanged.
         return [command]
