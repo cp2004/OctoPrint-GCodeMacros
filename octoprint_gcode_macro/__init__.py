@@ -167,7 +167,7 @@ class GcodeMacroPlugin(
 
 
 __plugin_name__ = "Gcode Macros"
-__plugin_pythoncompat__ = ">=3.6,<4"
+__plugin_pythoncompat__ = ">=3.7,<4"
 __plugin_version__ = __version__
 
 

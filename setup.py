@@ -63,7 +63,7 @@ plugin_additional_packages = []
 plugin_ignored_packages = []
 
 # Additional setup parameters, merged with the rest
-additional_setup_parameters = {"python_requires": ">=3, <4"}
+additional_setup_parameters = {"python_requires": ">=3.7,<4"}
 
 ########################################################################################################################
 
