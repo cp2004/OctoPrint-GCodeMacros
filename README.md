@@ -15,8 +15,8 @@ Install from the [plugin repository](https://plugins.octoprint.org/plugins/gcode
 Python 3, you can take a look
 [at this post](https://community.octoprint.org/t/upgrading-your-octoprint-install-to-python-3/35158?u=charlie_powell)
 
-**Warning 2:** Don't try installing this plugin from the source code on GitHub, since it has a build step for
-the frontend code. If you are interested in contributing, please see [the Contribution Guidelines](CONTRIBUTING.md)
+**Warning 2:** Don't try installing this plugin from the source code on GitHub, there may be some breakage as the CSS is
+only built on releases. If you are interested in contributing, please see [the Contribution Guidelines](CONTRIBUTING.md)
 
 ## Configuration
 
@@ -30,7 +30,7 @@ All commands are prefixed with an `@`, so they don't interfere with standard gco
 but also other plugins can use custom @ commands. For example, OctoLapse uses `@OCTOLAPSE TAKE-SNAPSHOT` or the WLED
 plugin uses `@WLED ON` or `@WLED OFF` to control some LEDs.
 
-The commands are **case sensitive**, and you can have spaces, numbers and punctuation in them!
+The commands are **case-sensitive**, and you can have spaces, numbers and punctuation in them!
 
 _These commands will not work while printing from the printer's SD card_
 
