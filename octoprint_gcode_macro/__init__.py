@@ -1,5 +1,5 @@
 import octoprint.plugin
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
 
 from octoprint_gcode_macro import _version
 
@@ -24,6 +24,10 @@ class GcodeMacroPlugin(
     def __init__(self):
         super().__init__()
         self.macros = {}
+
+        self.jinja_env = Environment(
+            loader=FileSystemLoader(self.get_plugin_data_folder()),
+        )
 
     # SettingsPlugin mixin
     def get_settings_defaults(self):
@@ -120,7 +124,7 @@ class GcodeMacroPlugin(
         try:
             content = self.macros[command]
         except KeyError as e:
-            # In theory this shouldn't happen with the check above, but if it does I want to know
+            # In theory this shouldn't happen with the check above, but if it does, I want to know
             self._logger.exception(e)
             content = []
 
@@ -130,7 +134,7 @@ class GcodeMacroPlugin(
         content = self.get_macro_content(command)
 
         try:
-            template = Template(content)
+            template = self.jinja_env.from_string(content)
             return template.render()
         except Exception as e:
             self._logger.error(f"Error while rendering macro for {command}")
