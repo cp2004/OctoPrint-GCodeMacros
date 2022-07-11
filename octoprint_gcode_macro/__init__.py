@@ -25,9 +25,7 @@ class GcodeMacroPlugin(
         super().__init__()
         self.macros = {}
 
-        self.jinja_env = Environment(
-            loader=FileSystemLoader(self.get_plugin_data_folder()),
-        )
+        self.jinja_env: Environment
 
     # SettingsPlugin mixin
     def get_settings_defaults(self):
@@ -42,6 +40,10 @@ class GcodeMacroPlugin(
         }
 
     def initialize(self):
+        # Data folder is not available until now
+        self.jinja_env = Environment(
+            loader=FileSystemLoader(self.get_plugin_data_folder()),
+        )
         self.reload_macros()
 
     def on_settings_save(self, data):
