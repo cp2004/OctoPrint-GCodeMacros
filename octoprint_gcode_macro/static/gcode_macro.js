@@ -68,6 +68,20 @@ $(function () {
         .concat(self.FORBIDDEN_MACROS);
       return !macros.includes(self.newMacroName());
     });
+
+    self.onDataUpdaterPluginMessage = function (plugin, data) {
+      if (plugin !== "gcode_macro") return;
+      if (data.type === "rendering_error") {
+        new PNotify({
+          title: "Error rendering macro <code>@" + data.command + "</code>",
+          text:
+            "There was an error rendering the macro. Please check your macro content and try again. " +
+            "For more details check the <code>octoprint.log</code>.",
+          type: "error",
+          hide: false,
+        });
+      }
+    };
   }
 
   OCTOPRINT_VIEWMODELS.push({

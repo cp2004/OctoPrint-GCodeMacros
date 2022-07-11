@@ -139,6 +139,9 @@ class GcodeMacroPlugin(
             template = self.jinja_env.from_string(content)
             return template.render()
         except Exception as e:
+            self._plugin_manager.send_plugin_message(
+                "gcode_macro", {"type": "rendering_error", "command": command}
+            )
             self._logger.error(f"Error while rendering macro for {command}")
             self._logger.exception(e)
             return ""
