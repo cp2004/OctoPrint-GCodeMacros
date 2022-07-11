@@ -86,8 +86,8 @@ class GcodeMacroPlugin(
         command = command.strip("@")
 
         if command in FORBIDDEN_MACROS or command not in self.macros.keys():
-            # Forbidden, illegal, not a macro command, ignore, command unchanged.
-            return [command]
+            # Forbidden, illegal, not a macro command, ignore, leave command unchanged.
+            return
 
         self._logger.debug(f"Rendering macro for @ command @{command}")
 
@@ -117,8 +117,8 @@ class GcodeMacroPlugin(
 
             return result
 
-        # If in doubt, just return the command unchanged.
-        return [command]
+        # If in doubt, just return nothing so the command remains unchanged.
+        return
 
     def get_macro_content(self, command):
         try:
