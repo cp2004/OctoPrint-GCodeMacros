@@ -17,4 +17,6 @@ For example, you may create a file such as `bed_level_test.gcode` in the data fo
 
 ```
 
+You will have to create and manage these files manually for now.
+
 Any questions, please get in touch. If you would like to improve the documentation, please open a PR.
