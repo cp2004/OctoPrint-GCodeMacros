@@ -83,15 +83,15 @@ class GcodeMacroPlugin(
         :param level: int, number of sub-macros that have been rendered
         :return: list, list of commands to send to the printer
         """
-        command = command.strip("@")
+        new_command = command.strip("@")
 
-        if command in FORBIDDEN_MACROS or command not in self.macros.keys():
+        if new_command in FORBIDDEN_MACROS or new_command not in self.macros.keys():
             # Forbidden, illegal, not a macro command, ignore, command unchanged.
             return [command]
 
-        self._logger.debug(f"Rendering macro for @ command @{command}")
+        self._logger.debug(f"Rendering macro for @ command @{new_command}")
 
-        content = self.render_with_jinja(command)
+        content = self.render_with_jinja(new_command)
 
         if content and isinstance(content, str):
             # Split long string into list of commands for OctoPrint to digest
@@ -112,7 +112,7 @@ class GcodeMacroPlugin(
                         result += [cmd]
             else:
                 self._logger.warning(
-                    f"Recursive limit hit trying to render macro {command}"
+                    f"Recursive limit hit trying to render macro {new_command}"
                 )
 
             return result
