@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import octoprint.plugin
 from jinja2 import Environment, FileSystemLoader
 
@@ -14,6 +17,8 @@ FORBIDDEN_MACROS = [
     "pause",
     "resume",
 ]
+DESCRIPTION_START_MARKER = "START_DESCRIPTION"
+DESCRIPTION_END_MARKER = "END_DESCRIPTION"
 
 
 class GcodeMacroPlugin(
@@ -24,11 +29,19 @@ class GcodeMacroPlugin(
     def __init__(self):
         super().__init__()
         self.macros = {}
+        # Structure:
+        # {
+        #     "a command": {
+        #         "content": "Some example content",
+        #         "description": "A description of the macro",
+        #     }
+        # }
 
         self.jinja_env: Environment
 
     # SettingsPlugin mixin
     def get_settings_defaults(self):
+        # TODO a default macro
         return {
             "macros": [
                 {
@@ -39,6 +52,23 @@ class GcodeMacroPlugin(
             ]
         }
 
+    def get_settings_version(self):
+        return 1
+
+    def on_settings_migrate(self, target, current):
+        if current is None or current < 1:
+            # Shift settings from config.yaml to files in plugin data folder
+            current_macros = self._settings.get(["macros"], merged=True)
+            # Process into the correct structure
+            result = {}
+            for macro in current_macros:
+                result[macro["command"]] = {
+                    "content": macro["content"],
+                    "description": macro["description"],
+                }
+            self.save_macros(result)
+            self._settings.remove(["macros"])
+
     def initialize(self):
         # Data folder is not available until now
         self.jinja_env = Environment(
@@ -47,14 +77,91 @@ class GcodeMacroPlugin(
         self.reload_macros()
 
     def on_settings_save(self, data):
+        # Extract macros, so they don't end up in config.yaml
+        macros = data.pop("macros")
+        self.save_macros(macros)
+        # If we have any other settings, save them now
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-        self.reload_macros()
 
-    def reload_macros(self):
-        self.macros = {}
-        macros = self._settings.get(["macros"], merged=True)
+    def load_macros(self):
+        """
+        Macros are stored as files in the plugin data folder (+ /macros) and are loaded into memory & available on the
+        settings API to edit.
+        """
+        macro_path = os.path.join(self.get_plugin_data_folder(), "macros")
+
+        # We don't support folders here, just files. They have the extension .gcode, filename is the command
+        # TODO check the limitations on filenames vs. macro names
+        # An alternative would be to store the name in the first line of the file or something
+        # TODO some kind of validation on anything?
+
+        for file in Path(macro_path).glob("*.gcode"):
+            command = os.path.splitext(file.name)[0]
+            description = ""
+            content = ""
+            with file.open("r") as f:
+                reading_description = False
+                for line in f:
+                    if line.strip() == DESCRIPTION_START_MARKER:
+                        reading_description = True
+                    elif line.strip() == DESCRIPTION_END_MARKER:
+                        reading_description = False
+                    else:
+                        if reading_description:
+                            description += line
+                        else:
+                            content += line
+
+            description.rstrip()  # Remove any whitespace from the end of description
+
+            self._logger.info(f"Macro loaded :@{command}, {description}")
+
+            self.macros[command] = content
+
+    def save_macros(self, macros):
+        """
+        Save macros to the plugin data folder
+
+        File format:
+        name: <command>.gcode
+
+        START_DESCRIPTION
+        <description>
+        END_DESCRIPTION
+
+        """
+        macro_path = os.path.join(self.get_plugin_data_folder(), "macros")
+        if not os.path.isdir(macro_path):
+            # Make the `macros` folder if it doesn't exist
+            os.makedirs(macro_path)
+
         for macro in macros:
-            self.macros[macro["command"]] = macro["content"]
+            command = macro["command"]
+            content = macro["content"]
+            description = macro["description"]
+
+            self.macros[command] = {
+                "content": content,
+                "description": description,
+            }
+
+            if command in FORBIDDEN_MACROS:
+                self._logger.warning(
+                    f"Forbidden macro command was attempted to be saved ({command})"
+                )
+                continue
+
+            # TODO
+            # if content == self.macros[command] and description == self.macros:
+            #     # No change, no need to save
+            #     continue
+
+            file = os.path.join(macro_path, f"{command}.gcode")
+            with open(file, "wt") as f:
+                f.write(f"{DESCRIPTION_START_MARKER}\n")
+                f.write(description)
+                f.write(f"\n{DESCRIPTION_END_MARKER}\n")
+                f.write(content)
 
     # AssetPlugin mixin
     def get_assets(self):
