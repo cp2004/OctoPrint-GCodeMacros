@@ -109,7 +109,9 @@ class GcodeMacroPlugin(
                 for cmd in commands:
                     if cmd.startswith("@"):
                         # Recursively render for each @ command in macro
-                        result += self.render_macro(cmd, level=level + 1)
+                        submacro = self.render_macro(cmd, level=level + 1)
+                        if submacro:
+                            result += submacro
                     else:
                         result += [cmd]
             else:
