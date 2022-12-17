@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/cp2004/OctoPrint-GCodeMacros#readme",
   "devDependencies": {
-    "sass": "^1.53.0"
+    "sass": "^1.57.0"
   }
 }
