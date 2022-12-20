@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import octoprint.plugin
 from jinja2 import Environment, FileSystemLoader
 
@@ -24,6 +27,13 @@ class GcodeMacroPlugin(
     def __init__(self):
         super().__init__()
         self.macros = {}
+        # Structure:
+        # {
+        #     "a command": {
+        #         "content": "Some example content",
+        #         "description": "A description of the macro",
+        #     }
+        # }
 
         self.jinja_env: Environment
 
@@ -39,22 +49,115 @@ class GcodeMacroPlugin(
             ]
         }
 
+    def get_settings_version(self):
+        return 1
+
     def initialize(self):
         # Data folder is not available until now
         self.jinja_env = Environment(
             loader=FileSystemLoader(self.get_plugin_data_folder()),
         )
-        self.reload_macros()
+        self.load_macros()
+
+    def on_settings_migrate(self, target, current):
+        if current is None:
+            # Need to migrate macro content from settings to files
+            self.save_macros(self._settings.get(["macros"], merged=True))
 
     def on_settings_save(self, data):
+        self.save_macros(data["macros"])
+        # Remove the macro content to save any other settings
+        data.pop("macros")
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
-        self.reload_macros()
 
-    def reload_macros(self):
+    def on_settings_load(self):
+        data = octoprint.plugin.SettingsPlugin.on_settings_load(self)
+        # Add content to the macros from settings & make into list
+        macros = [
+            {
+                "command": command,
+                "content": data["content"],
+                "description": data["description"],
+            }
+            for command, data in self.macros.items()
+        ]
+        data["macros"] = macros
+
+        return data
+
+    def load_macros(self):
+        """
+        Macros are stored as files in the plugin data folder (+ /macros) and are loaded into memory & available on the
+        settings API to edit.
+        """
+        macro_path = os.path.join(self.get_plugin_data_folder(), "macros")
+
+        # We don't support folders here, just files in one pile. They have the extension .gcode, filename is the command
+        # to match with an entry in the settings
+
+        macros_settings = self._settings.get(["macros"])
+        existing_commands = [
+            macro["command"] for macro in self._settings.get(["macros"])
+        ]
+
+        for file in Path(macro_path).glob("*.gcode"):
+            command = os.path.splitext(file.name)[0]
+            if command not in existing_commands:
+                # Ignore if no settings entry for this file
+                # So we don't try and pick up random files I hope
+                continue
+
+            # I *think* this works, it was suggested by copilot
+            description = macros_settings[existing_commands.index(command)][
+                "description"
+            ]
+
+            with open(file) as f:
+                content = f.read()
+
+            self.macros[command] = {
+                "content": content,
+                "description": description,
+            }
+
+    def save_macros(self, macros, save=False):
+        macro_path = os.path.join(self.get_plugin_data_folder(), "macros")
+        if not os.path.isdir(macro_path):
+            # Make the `macros` folder if it doesn't exist
+            os.makedirs(macro_path)
+
         self.macros = {}
-        macros = self._settings.get(["macros"], merged=True)
         for macro in macros:
-            self.macros[macro["command"]] = macro["content"]
+            command = macro["command"]
+            content = macro["content"]
+            description = macro["description"]
+
+            if command in FORBIDDEN_MACROS:
+                self._logger.warning(
+                    f"Forbidden macro command was attempted to be saved ({command})"
+                )
+                continue
+
+            file_path = Path(macro_path) / f"{command}.gcode"
+
+            with open(file_path, "w") as f:
+                f.write(content)
+
+            self.macros[command] = {
+                "content": content,
+                "description": description,
+            }
+
+        # Remove the content to save to settings as a list
+        settings_macros = [
+            {"command": command, "description": data["description"]}
+            for command, data in self.macros.items()
+        ]
+
+        self._settings.set(["macros"], settings_macros)
+        if save:
+            # Usually this is called as part of OctoPrint's settings saving, which would do this for us
+            self._settings.save()
 
     # AssetPlugin mixin
     def get_assets(self):
@@ -126,11 +229,11 @@ class GcodeMacroPlugin(
 
     def get_macro_content(self, command):
         try:
-            content = self.macros[command]
+            content = self.macros[command]["content"]
         except KeyError as e:
             # In theory this shouldn't happen with the check above, but if it does, I want to know
             self._logger.exception(e)
-            content = []
+            content = ""
 
         return content
 
