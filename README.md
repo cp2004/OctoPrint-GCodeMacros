@@ -58,7 +58,10 @@ Or maybe you fancy having a bit of fun, making your printer into a random number
 M117 Random number... {{ range(100) | random }}!
 ```
 
-**See the full [Jinja2 Template Designer Documentation](https://jinja.palletsprojects.com/en/2.11.x/templates/#random)
+Should you want to write _really, really_ long macros, the plugin supports including them as templates using Jinja.
+See the [template syntax documentation](./docs/template_syntax.md) for more information.
+
+**Check out the full [Jinja2 Template Designer Documentation](https://jinja.palletsprojects.com/en/2.11.x/templates/#random)
 for more information about the templates**
 
 ## Sponsors
